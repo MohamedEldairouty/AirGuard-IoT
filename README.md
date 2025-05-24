@@ -31,12 +31,13 @@
 
 ## Hardware Components
 
-| Component        | Description                        |
-|------------------|------------------------------------|
-| ESP32 Dev Board  | Wi-Fi enabled microcontroller      |
-| BME680 Sensor    | Air quality & environment sensing  |
-| Active Buzzer    | Audio alert for poor air quality   |
-| Breadboard + Wires | For prototyping connections      |
+| Component          | Description                        |
+|--------------------|------------------------------------|
+| ESP32 Dev Board    | Wi-Fi enabled microcontroller      |
+| BME680 Sensor      | Air quality & environment sensing  |
+| Active Buzzer      | Audio alert for poor air quality   |
+| OLED Display       | Local Data Display                 |
+| Breadboard + Wires | For prototyping connections        |
 
 ---
 
