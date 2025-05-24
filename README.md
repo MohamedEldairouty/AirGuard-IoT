@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Images/logo.jpg" width="200" alt="AirGuard Logo">
+</p>
+
 # AirGuard – IoT-Based Air Quality Monitoring System
 
 *AirGuard* is a real-time indoor air quality monitoring system built using ESP32, the BME680 sensor, and the Blynk IoT platform. It monitors environmental conditions such as IAQ (Indoor Air Quality Index), temperature, humidity, and pressure. When poor air quality is detected, the system triggers an alarm and sends push notifications to the user.
@@ -33,6 +37,24 @@
 | BME680 Sensor    | Air quality & environment sensing  |
 | Active Buzzer    | Audio alert for poor air quality   |
 | Breadboard + Wires | For prototyping connections      |
+
+---
+
+## Screenshots
+
+### Live IAQ Monitoring via Blynk App
+
+![App Screenshot](Images/Blynk_App_Dashboard.jpg)
+
+### System Overview with ESP32 & BME680
+
+![Hardware Setup](Images/hardware_demo.jpg)
+
+---
+
+## Demo Video
+
+▶ [Click to watch the demo](Demo_Video/airguard_demo.mp4)
 
 ---
 
