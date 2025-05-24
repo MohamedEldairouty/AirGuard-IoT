@@ -73,9 +73,9 @@ This project is licensed under the MIT License.
 
 ---
 
-## Authors
+## Team Members
 
-- Mohamed Abdallah Eldairouty  
-- Maya Hossam
-- Habiba Amr
-- Jana Ayman
+- *Mohamed Abdallah Eldairouty* – 221001719 – [@MohamedEldairouty](https://github.com/MohamedEldairouty)
+- *Maya Hossam* – 221000302 – 
+- *Habiba Amr* – 221000287 – 
+- *Jana Ayman* – 221000985 – 
