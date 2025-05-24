@@ -76,6 +76,6 @@ This project is licensed under the MIT License.
 ## Team Members
 
 - *Mohamed Abdallah* – 221001719 – [@MohamedEldairouty](https://github.com/MohamedEldairouty)
-- *Maya Hossam* – 221000302 – [@HabibaGhoneim](https://github.com/HabibaGhoneim)
-- *Habiba Amr* – 221000287 – [@MayaMorsy](https://github.com/Mayamorsy)
+- *Maya Hossam* – 221000302 – [@MayaMorsy](https://github.com/Mayamorsy) 
+- *Habiba Amr* – 221000287 – [@HabibaGhoneim](https://github.com/HabibaGhoneim)
 - *Jana Ayman* – 221000985 – 
