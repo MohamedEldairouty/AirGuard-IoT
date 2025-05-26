@@ -8,12 +8,6 @@
 
 ---
 
-## This File is the Project Report 📄  
-For the project poster, please refer to:  
-**[`Poster/poster.pdf`](Poster/poster.pdf)**
-
----
-
 ## Problem Statement ❓
 
 Poor indoor air quality (IAQ) can negatively impact health, productivity, and comfort. Most people are unaware of the gradual accumulation of harmful pollutants such as VOCs (volatile organic compounds), CO₂, or excess humidity. Traditional monitoring systems are expensive or limited in scope.
@@ -82,6 +76,17 @@ We propose **AirGuard**, an affordable, IoT-based air monitoring system using th
 | 🔊 Active Buzzer      | Audio alert for poor air quality   |
 | 📟 OLED Display       | Local Data Display                 |
 | 🔌 Breadboard + Wires | For prototyping connections        |
+
+---
+
+## Report 📄  
+This `README.md` file serves as the **Project Report**, covering all required components such as problem definition, solution architecture, protocol justification, system overview, and implementation details.
+
+---
+
+## Poster 🖼  
+Click below to view the official project poster:  
+**[`Project Poster`](Poster/poster.pdf)**
 
 ---
 
