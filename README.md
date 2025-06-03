@@ -64,7 +64,7 @@ AirGuard is a smart air quality monitoring and response system that:
   - Manual mode lasts 10 seconds, then auto-control resumes
 
 - 🔁 Auto Logic:
-  - IAQ ≥ 3 (Unhealthy) or gas < 15 → Turns fan/buzzer ON
+  - IAQ ≥ 150 (Unhealthy) or gas < 15 → Turns fan/buzzer ON
   - Otherwise → Keeps OFF
 
 ---
