@@ -1,0 +1,36 @@
+# Node.js
+node_modules/
+.env
+.env.*
+
+# Arduino
+*.ino.*
+*.hex
+*.elf
+
+# OS / IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+
+
+# Build / Output folders
+dist/
+build/
+out/
+
+# MacOS / Windows
+ehthumbs.db
+Icon?
+desktop.ini
+
+# Video exports
+*.mp4
+*.mov
+*.avi
+
+# Misc
+*.zip
+*.bak
+*.tmp
