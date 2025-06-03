@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AirGuard</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #F6ECE3;
+      color: #000000;
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      margin: 0;
+    }
+    .logo {
+      width: 130px;
+      margin-bottom: 0.1rem;
+    }
+    h1 {
+      color: #91766E;
+      font-size: 2.3rem;
+      margin: 0.2rem 0 0.1rem;
+      text-align: center;
+      font-weight: 700;
+    }
+    h2.slogan {
+      color: #555;
+      font-size: 1.05rem;
+      margin-top: 0;
+      text-align: center;
+      font-weight: 700;
+      font-style: italic;
+    }
+    .iaq-display {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      color: white;
+      font-size: 2rem;
+      text-align: center;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .readings {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.2rem;
+      margin-top: 1.5rem;
+      background: #FFFFFF;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 700px;
+    }
+    .reading {
+      padding: 0.8rem;
+      background: #B7A7A9;
+      border-radius: 8px;
+      color: white;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+    .alerts {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .alert {
+      color: red;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    .controls {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    button {
+      margin: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      background-color: #91766E;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 600;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background-color: #B7A7A9;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 2rem;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 1rem;
+    }
+    footer { margin-top: 2rem; font-size: 0.9rem; color: #444; font-family: 'Montserrat', sans-serif; text-align: center; font-style: italic; }
+  </style>
+</head>
+<body>
+  <img class="logo" src="logo.png" alt="AirGuard Logo" />
+  <h1>AirGuard</h1>
+  <h2 class="slogan">IoT-Based Air Quality Monitoring System</h2>
+
+  <div class="iaq-display" id="iaq-display">
+    IAQ: -- (Waiting for data...)
+  </div>
+
+  <div class="readings">
+    <div class="reading" id="temp">🌡️ Temp: --</div>
+    <div class="reading" id="humidity">💧 Humidity: --</div>
+    <div class="reading" id="pressure">📈 Pressure: --</div>
+    <div class="reading" id="gas">🛢️ Gas: --</div>
+    <div class="reading" id="altitude">⛰️ Altitude: --</div>
+    <div class="reading" id="iaq">🌫️ IAQ: --</div>
+  </div>
+
+  <div class="alerts" id="alerts"></div>
+
+  <div class="controls">
+    <button onclick="toggleDevice('power', 'ON')">⚡ Turn ON</button>
+    <button onclick="toggleDevice('power', 'OFF')">🔌 Turn OFF</button>
+    <div id="power-feedback" style="margin-top: 0.5rem; font-size: 1.2rem; color: #2ECC71;"></div>
+  </div>
+  
+
+  
+
+  <canvas id="tempChart"></canvas>
+  <canvas id="gasChart"></canvas>
+
+  <footer>
+    Stay safe & breathe clean air 🌿
+  </footer>
+
+  <script>
+    const socket = io();
+
+    const tempChart = new Chart(document.getElementById('tempChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{ label: 'Temperature (°C)', data: [], borderColor: '#91766E', borderWidth: 2, tension: 0.3 }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { ticks: { color: '#000' } },
+          y: { beginAtZero: false, ticks: { color: '#000' } }
+        }
+      }
+    });
+
+    const gasChart = new Chart(document.getElementById('gasChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{ label: 'Gas (Ω)', data: [], borderColor: '#91766E', borderWidth: 2, tension: 0.3 }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { ticks: { color: '#000' } },
+          y: { beginAtZero: true, ticks: { color: '#000' } }
+        }
+      }
+    });
+
+    socket.on('data', data => {
+      const now = new Date().toLocaleTimeString();
+
+      document.getElementById('temp').innerText = `🌡️ Temp: ${data.temperature.toFixed(1)} °C`;
+      document.getElementById('humidity').innerText = `💧 Humidity: ${Math.round(data.humidity)}%`;
+      document.getElementById('pressure').innerText = `📈 Pressure: ${Math.round(data.pressure)}hPa`;
+      document.getElementById('gas').innerText = `🛢️ Gas: ${data.gas.toFixed(1)} Ω`;
+      document.getElementById('altitude').innerText = `⛰️ Altitude: ${Math.round(data.altitude)} m`;
+      document.getElementById('iaq').innerText = `🌫️ IAQ: ${Math.round(data.iaq)}`;
+
+      const iaqBox = document.getElementById('iaq-display');
+      let iaqText = '', color = '#2ECC71';
+      if (data.iaq <= 50) iaqText = 'Good', color = '#2ECC71';
+      else if (data.iaq <= 100) iaqText = 'Moderate', color = '#F1C40F';
+      else if (data.iaq <= 150) iaqText = 'Unhealthy (Sensitive)', color = '#E67E22';
+      else if (data.iaq <= 200) iaqText = 'Unhealthy', color = '#E74C3C';
+      else if (data.iaq <= 300) iaqText = 'Very Unhealthy', color = '#8E44AD';
+      else iaqText = 'Hazardous', color = '#7E0023';
+
+      iaqBox.style.backgroundColor = color;
+      iaqBox.innerText = `IAQ: ${data.iaq.toFixed(2)} - ${iaqText}`;
+
+      const alerts = [];
+      if (data.temperature > 35) alerts.push('⚠️ Temperature too high!');
+      if (data.humidity > 80) alerts.push('⚠️ Humidity too high!');
+      if (data.gas > 100000) alerts.push('⚠️ Gas levels too high!');
+      if (data.iaq > 100) alerts.push('⚠️ Poor IAQ detected!');
+      document.getElementById('alerts').innerHTML = alerts.map(msg => `<div class='alert'>${msg}</div>`).join('');
+
+      const updateChart = (chart, value) => {
+        if (chart.data.labels.length > 20) {
+          chart.data.labels.shift();
+          chart.data.datasets[0].data.shift();
+        }
+        chart.data.labels.push(now);
+        chart.data.datasets[0].data.push(value);
+        chart.update();
+      };
+
+      updateChart(tempChart, data.temperature);
+      updateChart(gasChart, data.gas);
+    });
+
+    function toggleDevice(device, state) {
+    if (device === 'power') {
+      socket.emit('control', { device, state });
+
+      const feedbackEl = document.getElementById('power-feedback');
+      feedbackEl.innerText = `Turned ${state} ✅`;
+
+      setTimeout(() => {
+        feedbackEl.innerText = '';
+      }, 5000);
+    }
+  }
+
+  </script>
+</body>
+</html>
