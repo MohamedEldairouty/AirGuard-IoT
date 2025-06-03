@@ -50,7 +50,7 @@ AirGuard is a smart air quality monitoring and response system that:
 
 ### 🚀 1. Hardware Setup
 <p align="center">
-  <img src="Hardware/hardware.jpg" width="600" />
+  <img src="Hardware/breadboard.jpg" width="600" />
 </p>
 
 ## 🔁 2. MQTT Logic
