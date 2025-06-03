@@ -1,138 +1,125 @@
 <p align="center">
-  <img src="Images/logo.jpg" width="200" alt="AirGuard Logo">
+  <img src="Web_App/Frontend/logo.png" alt="AirGuard Logo" width="180"/>
 </p>
 
-# AirGuard – IoT-Based Air Quality Monitoring System 🌫
+# 🌬️ AirGuard – Smart Air Quality Monitor & Alert System
 
-**AirGuard** is a real-time indoor air quality monitoring system built using the ESP32 microcontroller, BME680 environmental sensor, and the Blynk IoT platform. It monitors key environmental parameters such as **IAQ (Indoor Air Quality Index)**, temperature, humidity, and pressure. When air quality drops below a safe threshold, the system activates a buzzer alarm and sends **push notifications** to the user’s smartphone.
-
----
-
-## Problem Statement ❓
-
-Poor indoor air quality (IAQ) can negatively impact health, productivity, and comfort. Most people are unaware of the gradual accumulation of harmful pollutants such as VOCs (volatile organic compounds), CO₂, or excess humidity. Traditional monitoring systems are expensive or limited in scope.
+> 🛡️ *Breathe Easy. Live Safe.*
 
 ---
 
-## Proposed Solution ✅
+## 🧠 Overview
 
-We propose **AirGuard**, an affordable, IoT-based air monitoring system using the **BME680 sensor** and **ESP32**, with real-time notifications and a mobile dashboard via **Blynk (MQTT-based)**. This project enables proactive monitoring and timely alerts for healthier indoor environments.
-
----
-
-## System Architecture 🏗
-
-[ESP32 Microcontroller] <–> [Blynk Cloud (MQTT Protocol)] <–> [Mobile Blynk App]
-
-| Layer              | Technology Used                    |
-|--------------------|-------------------------------------|
-| Microcontroller    | ESP32                              |
-| Sensor             | BME680 (via I2C)                   |
-| IoT Protocol       | **MQTT** (via Blynk)               |
-| Mobile Interface   | Blynk App                          |
-| Development Tools  | Arduino IDE + C++ + BSEC Library   |
+AirGuard is a smart air quality monitoring and response system that:
+- 🧪 Measures **temperature**, **humidity**, **pressure**, **gas resistance**, **altitude**, and **IAQ** using a BME680 sensor
+- 📟 Displays readings on an OLED screen
+- 🌐 Sends data via **MQTT over TLS** to a Node.js server connected to EMQX Broker
+- 💻 Provides a real-time **web dashboard** for live monitoring and manual override
+- 🔔 Automatically activates a **buzzer** and **fan** if air quality is poor
 
 ---
 
-## Why MQTT? 🔗
+## 📊 Features
 
-- **MQTT (Message Queuing Telemetry Transport)** is ideal for IoT due to its:
-  - Low power and bandwidth consumption
-  - Lightweight publish/subscribe model
-  - Reliable real-time message delivery
-- **Blynk** uses MQTT under the hood to simplify cloud communication between the ESP32 and the mobile dashboard.
-- We chose it for its **fast prototyping**, **global internet access (WAN)**, and **robust alert features**.
-
----
-
-## Features ✨
-
-- 📡 Real-time IAQ calculation using Bosch BSEC algorithm  
-- 🌡 Displays temperature, humidity, and pressure  
-- 🔔 Automatic buzzer when IAQ becomes unhealthy  
-- 📲 Push notifications via Blynk  
-- 📟 OLED display for local readings  
-- 🌐 Global (WAN-based) remote monitoring  
+✅ Real-time Air Quality Monitoring  
+✅ IAQ Classification + Color Indicators  
+✅ Auto-triggered Fan & Buzzer  
+✅ Manual ON/OFF Control via Dashboard  
+✅ MQTT Secure TLS Communication  
+✅ OLED Display for Local Readings  
+✅ Interactive Charts & UI Enhancements  
 
 ---
 
-## Technologies Used 🛠
+## 🧩 Technologies Used
 
-- **ESP32 Dev Board** – Main Wi-Fi-enabled microcontroller  
-- **BME680 Sensor** – Gas + environment sensing  
-- **Bosch BSEC Library v1.8.1492** – For IAQ estimation  
-- **Blynk IoT Platform** – Cloud + mobile dashboard  
-- **Arduino IDE** – Development environment  
-- **C++ (Arduino Core)** – Programming language  
-
----
-
-## Hardware Components 🧩
-
-| Component          | Description                        |
-|--------------------|------------------------------------|
-| 🧠 ESP32 Dev Board    | Wi-Fi enabled microcontroller      |
-| 🌫 BME680 Sensor      | Air quality & environment sensing  |
-| 🔊 Active Buzzer      | Audio alert for poor air quality   |
-| 📟 OLED Display       | Local Data Display                 |
-| 🔌 Breadboard + Wires | For prototyping connections        |
+| Component     | Purpose                              |
+|--------------|---------------------------------------|
+| ESP32         | Microcontroller (sensor + control)    |
+| BME680        | Air quality sensor                    |
+| OLED Display  | Onboard screen (I2C)                  |
+| Relay Module  | Controls Fan & Buzzer                 |
+| EMQX Broker   | Secure MQTT messaging                 |
+| Node.js + Socket.io | Backend MQTT Bridge            |
+| Chart.js      | Real-time data visualization          |
+| Ngrok         | WAN access to localhost server        |
 
 ---
 
-## Report 📄  
-This `README.md` file serves as the **Project Report**, covering all required components such as problem definition, solution architecture, protocol justification, system overview, and implementation details.
+## 🛠️ Setup Instructions
+
+### 🚀 1. Hardware Setup
+<p align="center">
+  <img src="Hardware/hardware.jpg" width="600" />
+</p>
+
+## 🔁 2. MQTT Logic
+
+- 📤 ESP32 publishes sensor data every 3s to:
+  - `bme680/temperature`, `humidity`, `pressure`, `gas`, `altitude`, `iaq`
+  - `airguard/iaq_label`
+
+- 📥 Subscribes to `airguard/power`:
+  - When received, it turns fan/buzzer ON or OFF manually
+  - Manual mode lasts 10 seconds, then auto-control resumes
+
+- 🔁 Auto Logic:
+  - IAQ ≥ 3 (Unhealthy) or gas < 15 → Turns fan/buzzer ON
+  - Otherwise → Keeps OFF
 
 ---
 
-## Poster 🖼  
-Click below to view the official project poster:  
-**[`Project Poster`](Poster/poster.pdf)**
+## 🧠 3. Backend Server (Node.js)
+
+```bash
+cd Web_App/Backend
+npm install
+node server.js
+```
+
+✅ Features:
+- Subscribes to EMQX broker (`mqtts://`)
+- Parses messages and updates real-time data object
+- Sends data to web client via `socket.io`
+- Emits `control` commands back to MQTT topic on button click
 
 ---
 
-## Screenshots 📸
+## 🌐 4. Web Dashboard
 
-### Live IAQ Monitoring via Blynk App
+- Start the backend server:
+  ```bash
+  node server.js
+  ```
 
-![App Screenshot](Images/Blynk_App_Dashboard.jpg)
+- Expose it using **ngrok**:
+  ```bash
+  ngrok http 3000
+  ```
 
-### System Overview (Hardware Setup Reference)
-
-![Hardware Setup](Images/hardware_demo.jpg)
-
----
-
-## Demo Video 🎥
-
-▶ [Click to watch the demo](Demo_Video/airguard_demo.mp4)
+- Copy the HTTPS link from ngrok and open it in your browser.
 
 ---
 
-## How to Use 🧪
+## 📽️ Demo & Screenshots
 
-1. 📥 Clone this repo and upload `AirGuard_BSEC_Blynk.ino` to your ESP32 via Arduino IDE.  
-2. 🛠 Connect the hardware as shown in the *hardware setup image* above.  
-3. 📲 Open the Blynk app to monitor IAQ data in real-time.  
-4. 🚨 If IAQ ≥ 150, buzzer sounds and you receive a push notification.  
-5. 🧠 Toggle alarm manually via Blynk if needed.  
+### 🌐 Web Dashboard Interface
 
----
-
-## Evaluation Criteria Coverage ✅
-
-| Criteria                          | Covered In Project                            |
-|----------------------------------|------------------------------------------------|
-| **Running Code**                 | Fully working on real hardware                |
-| **IoT Protocol Used**            | MQTT (via Blynk) – Explained above            |
-| **Mobile/Web Interface**         | Blynk App with real-time sync                 |
-| **WAN Scale Communication**      | Blynk cloud used over global internet         |
-| **Working Maquette**             | Assembled hardware model shown in images      |
-| **Poster + Report**              | Poster in `/Poster`, report = this README     |
-| **Team Contribution**            | See team list below                           |
+| Dashboard                         | Live Graphs & Controls           |
+|----------------------------------|----------------------------------|
+| ![](Web_App/Frontend/dashboard.jpg) | ![](Web_App/Frontend/graphs.jpg) |
 
 ---
 
-## Team Members 👥
+### 🎥 Full System Demo Video  
+
+> [▶️ Click to Watch Demo](Demo_Video/demo.mp4)
+
+Enjoy the full functionality of **AirGuard** in action — from real-time sensor monitoring and auto/manual fan & buzzer control, to visual analytics and alerts!
+
+---
+
+## 👥 Team Members
 
 - **Mohamed Abdallah** – 221001719 – [@MohamedEldairouty](https://github.com/MohamedEldairouty)  
 - **Maya Hossam** – 221000302 – [@MayaMorsy](https://github.com/MayaMorsy)  
@@ -141,6 +128,21 @@ Click below to view the official project poster:
 
 ---
 
-## License 📄
+## 🚀 How to Run
 
-This project is licensed under the MIT License.
+1. Upload Arduino code to ESP32  
+2. Start EMQX broker (we used public EMQX Cloud)  
+3. Start Node backend `node server.js`  
+4. Run `ngrok http 3000` and access the public URL  
+
+---
+
+## 📝 License
+
+This project is for academic use only.  
+All assets and content belong to the **AirGuard Team © 2025**.
+
+---
+
+> ⚠️ Stay aware. Stay safe. Your health matters.  
+> Made with ❤️ by Team AirGuard.
